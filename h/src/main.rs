@@ -17,6 +17,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::collections::HashMap;
 
+mod nysiis;
 
 fn get_h() -> std::io::Result<char> {
     // What ratio of words start with h?
@@ -45,7 +46,19 @@ fn get_h() -> std::io::Result<char> {
     return Ok(entries[0].0);
 }
 
+fn get_e() -> std::io::Result<char> {
+    // Stipulation: there are no other letters that will be common to all words that sounds like
+    // these words:
+    // tree
+    // tea
+    // meet
+    // feet
+    let nysiis_tree = nysiis::get_nysiis(String::from("tree"));
+    println!("nysiis_tree = {}", nysiis_tree);
+    return Ok('e');
+}
+
 fn main() -> std::io::Result<()> {
-    println!("{}", get_h().expect("DOH"));
+    println!("{}{}", get_h().expect("DOH"), get_e().unwrap());
     return Ok(());
 }
