@@ -25,6 +25,8 @@ fn test_get_nysiis() {
     assert_eq!(get_nysiis(String::from("beet")), "BAT"); 
     assert_eq!(get_nysiis(String::from("vasquez")), "VASG");
     assert_eq!(get_nysiis(String::from("evers")), "EVAR");
+    assert_eq!(get_nysiis(String::from("macintosh")), "MCANT");
+    assert_eq!(get_nysiis(String::from("knuth")), "NNAT");
 }
 
 pub fn get_nysiis(name: String) -> String {
@@ -72,6 +74,7 @@ pub fn get_nysiis(name: String) -> String {
     //    Considering the position of the pointer, only one of the following statements can be executed.
     let vowels: HashSet<&char> = HashSet::from_iter(['A', 'E', 'I', 'O', 'U'].iter());
     while pos < result.len() {
+        println!("pos = {} result = {}", pos, result);
         let pos_char = result.chars().nth(pos).unwrap(); // pos is checked one line above
         //        If blank then go to rule 7.
         if result.chars().nth(pos).unwrap() == ' ' {
@@ -106,13 +109,13 @@ pub fn get_nysiis(name: String) -> String {
             } else {
                 result.replace_range(pos..pos+1, "C");
             }
-        } else if pos < result.len() - 2 && &result[pos..3] == "SCH" {
+        } else if pos < result.len() - 2 && &result[pos..pos+3] == "SCH" {
             result.replace_range(pos..pos+3, "SSS");
-        } else if pos < result.len() - 1 && &result[pos..2] == "PH" {
+        } else if pos < result.len() - 1 && &result[pos..pos+2] == "PH" {
             result.replace_range(pos..pos+2, "FF");
         //        If the current position is the letter 'H' and either the preceding or following letter is not a vowel (AEIOU) then replace the current position with the preceding letter.
-        } else if pos_char == 'H' && (vowels.contains(&result.chars().nth(pos - 1).unwrap())
-                                          || (pos < result.len() && vowels.contains(&result.chars().nth(pos + 1).unwrap()))) {
+        } else if pos_char == 'H' && (!vowels.contains(&result.chars().nth(pos - 1).unwrap())
+                                          || (pos < result.len() - 1 && !vowels.contains(&result.chars().nth(pos + 1).unwrap()))) {
             let replacement = String::from(&result[pos-1..pos]).clone();
             result.replace_range(pos..pos+1, &replacement);
         //        If the current position is the letter 'W' and the preceding letter is a vowel then replace the current position with the preceding position.
@@ -124,18 +127,15 @@ pub fn get_nysiis(name: String) -> String {
         //    If the current position letter is equal to the last letter placed in the code then set the pointer to point to the next letter and go to step 5.
         if result.chars().nth(pos).unwrap() != nysiis_code.chars().last().unwrap() {
             nysiis_code.push(result.chars().nth(pos).unwrap());
-        } else {
-            println!("Skipping repeat chars");
         }
         //    The next character of the NYSIIS code is the current position letter.
         //    Increment the pointer to point at the next letter.
         pos += 1;
         //    Go to step 5.
-        println!("pos advanced to {}", pos);
     }
     //    If the last character of the NYSIIS code is the letter 'S' then remove it.
     if nysiis_code.chars().last().unwrap() == 'S' {
-        nysiis_code.split_off(nysiis_code.len());
+        nysiis_code.truncate(nysiis_code.len() - 1);
     }
     //    If the last two characters of the NYSIIS code are the letters 'AY' then replace them with the single character 'Y'.
     let n_code_l = nysiis_code.len();
@@ -145,7 +145,7 @@ pub fn get_nysiis(name: String) -> String {
     }
     //    If the last character of the NYSIIS code is the letter 'A' then remove this letter.
     if nysiis_code.chars().last().unwrap() == 'A' {
-        nysiis_code.split_off(nysiis_code.len() - 1);
+        nysiis_code.truncate(nysiis_code.len() - 1);
     }
     return nysiis_code;
 }
