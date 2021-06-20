@@ -1,0 +1,9 @@
+[package]
+name = "h"
+version = "0.1.0"
+edition = "2018"
+description = "Produces the letter h but only by the worst and most painful method possible."
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
