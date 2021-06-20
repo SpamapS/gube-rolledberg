@@ -23,6 +23,8 @@ fn test_get_nysiis() {
     assert_eq!(get_nysiis(String::from("tree")), "TRY"); 
     assert_eq!(get_nysiis(String::from("flea")), "FL"); 
     assert_eq!(get_nysiis(String::from("beet")), "BAT"); 
+    assert_eq!(get_nysiis(String::from("vasquez")), "VASG");
+    assert_eq!(get_nysiis(String::from("evers")), "EVAR");
 }
 
 pub fn get_nysiis(name: String) -> String {
@@ -68,7 +70,7 @@ pub fn get_nysiis(name: String) -> String {
     //    In the following rules, a scan is performed on the characters of the name. This is described in terms of a program loop. A pointer is used to point to the current position under consideration in the name. Step 4 is to set this pointer to point to the second character of the name.
     let mut pos = 1;
     //    Considering the position of the pointer, only one of the following statements can be executed.
-    let vowels: HashSet<&char> = HashSet::from_iter(['A', 'E', 'I', 'O', 'U', 'a', 'e', 'i', 'o', 'u'].iter());
+    let vowels: HashSet<&char> = HashSet::from_iter(['A', 'E', 'I', 'O', 'U'].iter());
     while pos < result.len() {
         let pos_char = result.chars().nth(pos).unwrap(); // pos is checked one line above
         //        If blank then go to rule 7.
@@ -120,15 +122,16 @@ pub fn get_nysiis(name: String) -> String {
         //        If none of these rules applies, then retain the current position letter value.
         }
         //    If the current position letter is equal to the last letter placed in the code then set the pointer to point to the next letter and go to step 5.
-        if pos_char == nysiis_code.chars().last().unwrap() {
-            pos += 1;
-            continue;
+        if result.chars().nth(pos).unwrap() != nysiis_code.chars().last().unwrap() {
+            nysiis_code.push(result.chars().nth(pos).unwrap());
+        } else {
+            println!("Skipping repeat chars");
         }
         //    The next character of the NYSIIS code is the current position letter.
-        nysiis_code.push(result.chars().nth(pos).unwrap());
         //    Increment the pointer to point at the next letter.
         pos += 1;
         //    Go to step 5.
+        println!("pos advanced to {}", pos);
     }
     //    If the last character of the NYSIIS code is the letter 'S' then remove it.
     if nysiis_code.chars().last().unwrap() == 'S' {
