@@ -16,6 +16,7 @@
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::collections::HashMap;
+use itertools::Itertools;
 
 mod nysiis;
 
@@ -47,14 +48,25 @@ fn get_h() -> std::io::Result<char> {
 }
 
 fn get_e() -> std::io::Result<char> {
-    // Stipulation: there are no other letters that will be common to all words that sounds like
-    // these words:
-    // tree
-    // tea
-    // meet
-    // feet
-    let nysiis_tree = nysiis::get_nysiis(String::from("tree"));
-    println!("nysiis_tree = {}", nysiis_tree);
+    let dict: File = File::open("/etc/dictionaries-common/words")?;
+    let reader = BufReader::new(dict);
+    for line_read in reader.lines() {
+        match line_read {
+            Ok(ref line) => {
+                // What letters get removed?
+                println!("doing {:?}", line);
+                let code =  nysiis::get_nysiis(line.clone());
+                let mut n_c = 0;
+                let mut n_cc = 0;
+                for c in line.chars().unique() {
+                    n_cc = code.chars().filter(|cc| *cc == c).count();
+                    n_c += 1
+                }
+                println!("n_c = {} n_cc = {} code = {} line = {}", n_c, n_cc, code, line);
+            },
+            Err(e) => return Err(e)
+        }
+    }
     return Ok('e');
 }
 

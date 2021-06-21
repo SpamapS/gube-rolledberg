@@ -7,3 +7,4 @@ description = "Produces the letters in hello world extremely stupidly"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+itertools = "*"
