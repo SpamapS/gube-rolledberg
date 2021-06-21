@@ -74,7 +74,6 @@ pub fn get_nysiis(name: String) -> String {
     //    Considering the position of the pointer, only one of the following statements can be executed.
     let vowels: HashSet<&char> = HashSet::from_iter(['A', 'E', 'I', 'O', 'U'].iter());
     while pos < result.len() {
-        println!("pos = {} result = {}", pos, result);
         let pos_char = result.chars().nth(pos).unwrap(); // pos is checked one line above
         //        If blank then go to rule 7.
         if result.chars().nth(pos).unwrap() == ' ' {
@@ -125,7 +124,8 @@ pub fn get_nysiis(name: String) -> String {
         //        If none of these rules applies, then retain the current position letter value.
         }
         //    If the current position letter is equal to the last letter placed in the code then set the pointer to point to the next letter and go to step 5.
-        if result.chars().nth(pos).unwrap() != nysiis_code.chars().last().unwrap() {
+        //    XXX this seems to be a little different in some implementations. Harumph.
+        if result.chars().nth(pos).unwrap() != nysiis_code.chars().last().unwrap() || pos == 1 {
             nysiis_code.push(result.chars().nth(pos).unwrap());
         }
         //    The next character of the NYSIIS code is the current position letter.
