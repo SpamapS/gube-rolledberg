@@ -27,6 +27,8 @@ fn test_get_nysiis() {
     assert_eq!(get_nysiis(String::from("evers")), "EVAR");
     assert_eq!(get_nysiis(String::from("macintosh")), "MCANT");
     assert_eq!(get_nysiis(String::from("knuth")), "NNAT");
+    assert_eq!(get_nysiis(String::from("SCHOENHOEFT")), "SSANAFT");
+    assert_eq!(get_nysiis(String::from("KRATZER")), "CRATSAR");
 }
 
 pub fn get_nysiis(name: String) -> String {
