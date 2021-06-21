@@ -50,24 +50,23 @@ fn get_h() -> std::io::Result<char> {
 fn get_e() -> std::io::Result<char> {
     let dict: File = File::open("/etc/dictionaries-common/words")?;
     let reader = BufReader::new(dict);
+    let mut chars_left: HashMap<char, usize> = HashMap::new();
     for line_read in reader.lines() {
         match line_read {
             Ok(ref line) => {
                 // What letters get removed?
-                println!("doing {:?}", line);
                 let code =  nysiis::get_nysiis(line.clone());
-                let mut n_c = 0;
-                let mut n_cc = 0;
-                for c in line.chars().unique() {
-                    n_cc = code.chars().filter(|cc| *cc == c).count();
-                    n_c += 1
+                for c in line.to_uppercase().chars().unique() {
+                    let this_cc = code.chars().filter(|cc| *cc == c).count();
+                    chars_left.entry(c).and_modify(|e| { *e += this_cc }).or_insert(this_cc);
                 }
-                println!("n_c = {} n_cc = {} code = {} line = {}", n_c, n_cc, code, line);
             },
             Err(e) => return Err(e)
         }
     }
-    return Ok('e');
+    // XXX: 10967 was the count for e with my words file which is likely to only work on my machine
+    let left: String = chars_left.drain().filter(|(_, v)| *v >= 10900 && *v <= 10975).map(|(k,_)| k).collect::<String>().to_lowercase();
+    return Ok(left.chars().nth(0).unwrap());
 }
 
 fn main() -> std::io::Result<()> {

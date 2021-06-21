@@ -113,7 +113,6 @@ pub fn get_nysiis(name: String) -> String {
         //            'PH' then replace the string with 'FF'
         //
         } else if pos_char == 'K' {
-            println!("pos = {} && name = {}", pos, name);
             if pos < name.len() -1 && name.chars().nth(pos+1).unwrap() == 'K' { 
                 name.replace_range(pos..pos+1, "N");
             } else {
