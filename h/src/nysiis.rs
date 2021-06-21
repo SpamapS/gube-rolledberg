@@ -29,6 +29,7 @@ fn test_get_nysiis() {
     assert_eq!(get_nysiis(String::from("knuth")), "NNAT");
     assert_eq!(get_nysiis(String::from("SCHOENHOEFT")), "SSANAFT");
     assert_eq!(get_nysiis(String::from("KRATZER")), "CRATSAR");
+    assert_eq!(get_nysiis(String::from("SHOULDERS")), "SHALDAR");
 }
 
 pub fn get_nysiis(name: String) -> String {
@@ -115,9 +116,10 @@ pub fn get_nysiis(name: String) -> String {
         } else if pos < result.len() - 1 && &result[pos..pos+2] == "PH" {
             result.replace_range(pos..pos+2, "FF");
         //        If the current position is the letter 'H' and either the preceding or following letter is not a vowel (AEIOU) then replace the current position with the preceding letter.
-        } else if pos_char == 'H' && (!vowels.contains(&result.chars().nth(pos - 1).unwrap())
+        } else if pos > 1 && pos_char == 'H' && (!vowels.contains(&result.chars().nth(pos - 1).unwrap())
                                           || (pos < result.len() - 1 && !vowels.contains(&result.chars().nth(pos + 1).unwrap()))) {
             let replacement = String::from(&result[pos-1..pos]).clone();
+            println!("replacing 'H' with {} at pos = {}", replacement, pos);
             result.replace_range(pos..pos+1, &replacement);
         //        If the current position is the letter 'W' and the preceding letter is a vowel then replace the current position with the preceding position.
         } else if pos_char == 'W' && vowels.contains(&result.chars().nth(pos - 1).unwrap()) {
